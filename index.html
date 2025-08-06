@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Battleship</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tomorrow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+<script defer src="main.js"></script></head>
+<body>
+  <header>
+    <h1>
+      Battleship
+    </h1>
+    <div style="display: flex; gap: 40px">
+      <button id="newGame">new game</button>
+      <button id="randomBoard">random board</button>
+    </div>
+  </header>
+  <div class="popup">
+    <h1></h1>
+    <button>continue</button>
+  </div>
+  <main>
+    <form>
+      <div>
+        <h3 id="formHeader"></h3>
+        <h4>Enter values like (A, 1)</h4>
+        <label for="startx">Starting coordinates:</label>
+        ( <input type="text" name="startx" id="startx" maxlength="1" pattern="[a-j]|[A-J]" required autocomplete="off">
+        ,
+        <input type="text" name="starty" id="starty" maxlength="2" pattern="[1-9]|10" required autocomplete="off"> )
+      </div>
+      <div>
+        <label for="endx">Ending coordinates:</label>
+        ( <input type="text" name="endx" id="endx" maxlength="1" pattern="[a-j]|[A-J]" required autocomplete="off">
+        ,
+        <input type="text" name="endy" id="endy" maxlength="2" pattern="[1-9]|10" required autocomplete="off"> )
+      </div>
+      <input type="submit" value="submit">
+    </form>
+    <div id="humanBoardContainer">
+      <h2>Your board</h2>
+      <ul class="cols">
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li>6</li>
+        <li>7</li>
+        <li>8</li>
+        <li>9</li>
+        <li>10</li>
+      </ul>
+      <ul class="rows">
+        <li>A</li>
+        <li>B</li>
+        <li>C</li>
+        <li>D</li>
+        <li>E</li>
+        <li>F</li>
+        <li>G</li>
+        <li>H</li>
+        <li>I</li>
+        <li>J</li>
+      </ul>
+      <div id="humanBoard"></div>
+    </div>
+
+    <div id="computerBoardContainer">
+      <h2>Computer's board</h2>
+      <ul class="cols">
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li>6</li>
+        <li>7</li>
+        <li>8</li>
+        <li>9</li>
+        <li>10</li>
+      </ul>
+      <ul class="rows">
+        <li>A</li>
+        <li>B</li>
+        <li>C</li>
+        <li>D</li>
+        <li>E</li>
+        <li>F</li>
+        <li>G</li>
+        <li>H</li>
+        <li>I</li>
+        <li>J</li>
+      </ul>
+      <div id="computerBoard"></div>
+    </div>
+  </main>
+  <footer>
+    2025 Caleb Lee
+  </footer>
+</body>
+</html>
