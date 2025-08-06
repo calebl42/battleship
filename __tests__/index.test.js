@@ -84,4 +84,18 @@ test("getSunk", () => {
 
 test("randomBoard", () => {
   let rando = randomBoard();
+  let total = 0;
+  let board = new Array(10).fill(0).map(() => new Array(10).fill(0));
+
+  for ([ [start_x, start_y], [end_x, end_y] ] of randomBoard()) {
+    for (x = start_x; x <= end_x; x++) {
+      for (y = start_y; y <= end_y; y++) {
+        expect(board[x][y]).toBe(0);
+        board[x][y] = 1;
+        total++;
+      }
+    }
+  }
+
+  expect(total).toBe(17);
 });
