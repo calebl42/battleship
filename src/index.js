@@ -6,11 +6,14 @@ const computerBoardContainer = document.getElementById("computerBoardContainer")
 const humanBoard = document.getElementById("humanBoard");
 const computerBoard = document.getElementById("computerBoard");
 let form = document.querySelector("form");
-let dialog = document.querySelector("dialog");
-let dialogButton = document.querySelector("dialog button");
-dialogButton.addEventListener("click", () => {
-  dialog.close();
-});
+let popup = document.querySelector(".popup");
+let popupHeader = document.querySelector(".popup > h1");
+let popupButton = document.querySelector(".popup > button");
+popup.style.display = "none";
+popupButton.addEventListener("click", () => {
+  popup.style.display = "none";
+  console.log("huh");
+})
 humanBoardContainer.style.display = "none";
 computerBoardContainer.style.display = "none";
 form.style.display = "none";
@@ -24,8 +27,15 @@ let index = 0;
 function handleForm(e) {
   e.preventDefault();
   let formData = new FormData(form);
-  human.gameBoard.addShip(shipNames[index], sizes[index], [formData.get("startx"), formData.get("starty")], 
-    [formData.get("endx"), formData.get("endy")]
+  let [shipStart, shipEnd] = [
+    [formData.get("startx").toUpperCase().charCodeAt(0) - "A".charCodeAt(0), formData.get("starty")-1], 
+    [formData.get("endx").toUpperCase().charCodeAt(0) - "A".charCodeAt(0), formData.get("endy")-1]
+  ].sort(); 
+  human.gameBoard.addShip(
+    shipNames[index], 
+    sizes[index], 
+    shipStart,
+    shipEnd
   );
   updateBoard(humanBoard, human);
   index++;
@@ -40,7 +50,7 @@ function handleForm(e) {
       index++;
     }
     index = 0;
-    computerBoardContainer.style.display = "block";
+    computerBoardContainer.style.display = "grid";
     updateBoard(computerBoard, computer);
   }
   form.reset();
@@ -50,7 +60,7 @@ export function setUp() {
   human = new Player('real');
   computer = new Player('computer');
   updateBoard(humanBoard, human);
-  humanBoardContainer.style.display = "block";
+  humanBoardContainer.style.display = "grid";
   computerBoardContainer.style.display = "none";
   form.reset();
   
@@ -74,17 +84,34 @@ function updateBoard(board, player) {
         cell.addEventListener("click", () => {
           player.gameBoard.receiveAttack(i, j);
           updateBoard(board, player);
-          if (player.gameBoard.allSunk()) {
-            let dialogHeader = document.querySelector("dialog h1");
-            dialogHeader.textContent = "Congratulations! You won."
-            dialog.show();
+          if (computer.gameBoard.allSunk()) {
+            popupHeader.textContent = "Congratulations! You Won!";
+            popup.style.display = "flex";
           }
-          human.gameBoard.receiveAttack(Math.floor(Math.random()*10), Math.floor(Math.random()*10));
+          while (true) {
+            let hits = 0;
+            for (let arr of human.gameBoard.board) {
+              for (let cell of arr) {
+                if (cell === "hit") {
+                  hits++;
+                }
+              }
+            }
+            if (hits >= 17) break;
+            let attack_x =  Math.floor(Math.random()*10);
+            let attack_y = Math.floor(Math.random()*10);
+            if (human.gameBoard.board[attack_x][attack_y] === "miss" ||
+              human.gameBoard.board[attack_x][attack_y] === "hit") {
+              continue;
+            } else {
+              human.gameBoard.receiveAttack(attack_x, attack_y);
+              break;
+            }
+          }
           updateBoard(humanBoard, human);
           if (human.gameBoard.allSunk()) {
-            let dialogHeader = document.querySelector("dialog h1");
-            dialogHeader.textContent = "You have been defeated!"
-            dialog.show();
+            popupHeader.textContent = "Oh no! You Lost!";
+            popup.style.display = "flex";
           }
         });
       }
@@ -110,4 +137,29 @@ function updateBoard(board, player) {
 let newGameButton = document.getElementById("newGame");
 newGameButton.addEventListener("click", () => {
   setUp();
+});
+
+let randomBoardButton = document.getElementById("randomBoard");
+
+randomBoardButton.addEventListener("click", () => {
+  human = new Player('real');
+  computer = new Player('computer');
+  index = 0;
+  let rando = randomBoard();
+  for (const [[start_x, start_y], [end_x, end_y]] of rando) {
+    human.gameBoard.addShip(shipNames[index], sizes[index], [start_x, start_y], [end_x, end_y]);
+    index++;
+  }
+  index = 0;
+  rando = randomBoard();
+  for (const [[start_x, start_y], [end_x, end_y]] of rando) {
+    computer.gameBoard.addShip(shipNames[index], sizes[index], [start_x, start_y], [end_x, end_y]);
+    index++;
+  }
+  index = 0;
+  updateBoard(humanBoard, human);
+  updateBoard(computerBoard, computer);
+  humanBoardContainer.style.display = "grid";
+  computerBoardContainer.style.display = "grid";
+  form.style.display = "none";
 });

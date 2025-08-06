@@ -85,11 +85,11 @@ export function randomBoard() {
     switch(direction) {
       case 0:
         if (attempt_x + sizes[index]-1 >= 10) continue;
-        for (let x = attempt_x; x < attempt_x + sizes[index]-1; x++) {
+        for (let x = attempt_x; x <= attempt_x + sizes[index]-1; x++) {
           if (board[x][attempt_y] !== 0) taken = true;
         }
         if (taken) continue;
-        for (let x = attempt_x; x < attempt_x + sizes[index]-1; x++) {
+        for (let x = attempt_x; x <= attempt_x + sizes[index]-1; x++) {
           board[x][attempt_y] = 1;
         }
         coords.push([ [attempt_x, attempt_y] , [attempt_x + sizes[index]-1, attempt_y] ]);
@@ -109,11 +109,11 @@ export function randomBoard() {
         break;
       case 2:
         if (attempt_y + sizes[index]-1 >= 10) continue;
-        for (let y = attempt_y; y < attempt_y + sizes[index]-1; y++) {
+        for (let y = attempt_y; y <= attempt_y + sizes[index]-1; y++) {
           if (board[attempt_x][y] !== 0) taken = true;
         }
         if (taken) continue;
-        for (let y = attempt_y; y < attempt_y + sizes[index]-1; y++) {
+        for (let y = attempt_y; y <= attempt_y + sizes[index]-1; y++) {
           board[attempt_x][y] = 1;
         }
         coords.push([ [attempt_x, attempt_y] , [attempt_x, attempt_y + sizes[index]-1] ]);
