@@ -6,6 +6,11 @@ const computerBoardContainer = document.getElementById("computerBoardContainer")
 const humanBoard = document.getElementById("humanBoard");
 const computerBoard = document.getElementById("computerBoard");
 let form = document.querySelector("form");
+let dialog = document.querySelector("dialog");
+let dialogButton = document.querySelector("dialog button");
+dialogButton.addEventListener("click", () => {
+  dialog.close();
+});
 humanBoardContainer.style.display = "none";
 computerBoardContainer.style.display = "none";
 form.style.display = "none";
@@ -69,8 +74,18 @@ function updateBoard(board, player) {
         cell.addEventListener("click", () => {
           player.gameBoard.receiveAttack(i, j);
           updateBoard(board, player);
+          if (player.gameBoard.allSunk()) {
+            let dialogHeader = document.querySelector("dialog h1");
+            dialogHeader.textContent = "Congratulations! You won."
+            dialog.show();
+          }
           human.gameBoard.receiveAttack(Math.floor(Math.random()*10), Math.floor(Math.random()*10));
           updateBoard(humanBoard, human);
+          if (human.gameBoard.allSunk()) {
+            let dialogHeader = document.querySelector("dialog h1");
+            dialogHeader.textContent = "You have been defeated!"
+            dialog.show();
+          }
         });
       }
 
