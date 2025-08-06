@@ -1,66 +1,98 @@
+import { Player, randomBoard } from "./gamelogic.js";
 import "./styles.css";
 
-export class Ship {
-  constructor(size, name) {
-    this.size = size;
-    this.hits = 0;
-    this.sunk = false;
-    this.name = name;
-  }
+const humanBoardContainer = document.getElementById("humanBoardContainer");
+const computerBoardContainer = document.getElementById("computerBoardContainer");
+const humanBoard = document.getElementById("humanBoard");
+const computerBoard = document.getElementById("computerBoard");
+let form = document.querySelector("form");
+humanBoardContainer.style.display = "none";
+computerBoardContainer.style.display = "none";
+form.style.display = "none";
+let human;
+let computer;
+let formHeader = document.getElementById("formHeader");
+const shipNames = ["Carrier", "Battleship", "Cruiser", "Submarine", "Destroyer"];
+const sizes = [5, 4, 3, 3, 2];
+let index = 0;
 
-  hit() {
-    this.hits++;
-    if (this.hits === this.size) this.sunk = true;
+function handleForm(e) {
+  e.preventDefault();
+  let formData = new FormData(form);
+  human.gameBoard.addShip(shipNames[index], sizes[index], [formData.get("startx"), formData.get("starty")], 
+    [formData.get("endx"), formData.get("endy")]
+  );
+  updateBoard(humanBoard, human);
+  index++;
+  if (index < shipNames.length) {
+    formHeader.textContent = `Position your ${shipNames[index]} (${sizes[index]} units long)`;
+  } else {
+    form.style.display = "none";
+    index = 0;
+    let rando = randomBoard();
+    for (const [[start_x, start_y], [end_x, end_y]] of rando) {
+      computer.gameBoard.addShip(shipNames[index], sizes[index], [start_x, start_y], [end_x, end_y]);
+      index++;
+    }
+    index = 0;
+    computerBoardContainer.style.display = "block";
+    updateBoard(computerBoard, computer);
   }
-
-  isSunk() {
-    return this.sunk;
-  }
+  form.reset();
 }
 
-export class Gameboard {
-  constructor(config) {
-    this.board = new Array(10).fill(-1).map(() => new Array(10).fill(-1));
-    this.ships = [new Ship(5, "Carrier"), new Ship(4, "Battleship"), new Ship(3, "Cruiser"), new Ship(3, "Submarine"), new Ship(2, "Destroyer")];
-    let i = 0;
-    for (const [[start_x, start_y], [end_x, end_y]] of config) {
-      for (let x = start_x; x <= end_x; x++) {
-        for (let y = start_y; y <= end_y; y++) {
-          this.board[x][y] = i;
-        }
+export function setUp() {
+  human = new Player('real');
+  computer = new Player('computer');
+  updateBoard(humanBoard, human);
+  humanBoardContainer.style.display = "block";
+  computerBoardContainer.style.display = "none";
+  form.reset();
+  
+  let newForm = form.cloneNode(true);
+  form.parentNode.replaceChild(newForm, form);
+  form = document.querySelector("form");
+  form.style.display = "block";
+  formHeader = document.getElementById("formHeader");
+  formHeader.textContent = `Position your ${shipNames[index]} (5 units long)`;
+  form.addEventListener("submit", (e) => handleForm(e));
+}
+
+function updateBoard(board, player) {
+  //update the board element with the player object's array data
+  board.innerHTML = "";
+  for (let i = 0; i < 10; i++) {
+    for (let j = 0; j < 10; j++) {
+      let cell = document.createElement("div");
+      cell.classList.add("cell");
+      if (player.type === 'computer' && player.gameBoard.ships.length === 5) {
+        cell.addEventListener("click", () => {
+          player.gameBoard.receiveAttack(i, j);
+          updateBoard(board, player);
+          human.gameBoard.receiveAttack(Math.floor(Math.random()*10), Math.floor(Math.random()*10));
+          updateBoard(humanBoard, human);
+        });
       }
-      i++;
+
+      switch (player.gameBoard.board[i][j]) {
+        case "hit":
+          cell.style.backgroundColor = "red";
+          break;
+        case "miss":
+          cell.style.backgroundColor = "white";
+          break;
+        case "":
+          cell.style.backgroundColor = "lightblue";
+          break;
+        default:
+          cell.style.backgroundColor = (player.type === "real") ? "grey" : "lightblue";
+      }
+      board.appendChild(cell);
     }
-  }
-
-  receiveAttack(x, y) {
-    if (this.board[x][y] === -1) {
-      this.board[x][y] = "miss";
-    } else if (this.board[x][y] === "miss" || this.board[x][y] === "hit") {
-      return;
-    } else {
-      this.ships[this.board[x][y]].hit();
-      this.board[x][y] = "hit";
-    }
-  }
-
-  allSunk() {
-    return this.ships.reduce((accum, cur) => {return accum && cur.isSunk();}, true);
-  }
-
-  getSunk() {
-    let sunken = [];
-    for (let ship of this.ships) {
-      if (ship.isSunk()) sunken.push(ship.name);
-    }
-
-    return sunken;
   }
 }
 
-export class Player {
-  constructor(type, gameBoard) {
-    this.type = type;
-    this.gameBoard = gameBoard;
-  }
-}
+let newGameButton = document.getElementById("newGame");
+newGameButton.addEventListener("click", () => {
+  setUp();
+});

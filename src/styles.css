@@ -21,19 +21,43 @@ main {
   margin-bottom: 50px;
 }
 
-#playerBoard {
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+form > div {
+  margin-bottom: 20px;
+}
+input:not(input[type="submit"]) {
+  width: 20px;
+  border: 1px solid black;
+}
+
+#humanBoard {
   border: 2px solid black;
   width: 500px;
   height: 500px;
+  display: grid;
+  grid-template: repeat(10, 1fr) / repeat(10, 1fr);
+}
+
+.cell {
+  border: 1px solid grey;
+  width: auto;
+  height: auto;
 }
 
 #computerBoard {
   border: 2px solid black;
   width: 500px;
   height: 500px;
+  display: grid;
+  grid-template: repeat(10, 1fr) / repeat(10, 1fr);
 }
 
-h3 {
+h2 {
   text-align: center;
 }
 

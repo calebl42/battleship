@@ -1,20 +1,19 @@
-import { Ship, Gameboard } from "./index.js";
+import { Ship, Gameboard, randomBoard } from "../src/gamelogic.js";
 
 test("isSunk", () => {
-  let destroyer = new Ship(2, "Destroyer");
+  let destroyer = new Ship("Destroyer", 2);
   destroyer.hit();
   destroyer.hit();
   expect(destroyer.isSunk()).toBe(true);
 });
 
 test("receiveAttack", () => {
-  let g = new Gameboard([
-    [ [9, 0] , [9, 4] ],
-    [ [2, 4] , [5, 4] ],
-    [ [5, 8] , [7, 8] ],
-    [ [1, 1] , [1, 3] ],
-    [ [1, 8] , [1, 9] ]
-  ]);
+  let g = new Gameboard();
+  g.addShip("Carrier", 5, [9, 0], [9, 4]);
+  g.addShip("Battleship", 4, [2, 4], [5, 4]);
+  g.addShip("Cruiser", 3, [5, 8], [7, 8]);
+  g.addShip("Submarine", 3, [1, 1], [1, 3]);
+  g.addShip("Destroyer", 2, [1, 8], [1, 9]);
 
   g.receiveAttack(0, 0);
   expect(g.board[0][0]).toBe("miss");
@@ -23,13 +22,12 @@ test("receiveAttack", () => {
 });
 
 test("allSunk", () => {
-  let g = new Gameboard([
-    [ [9, 0] , [9, 4] ],
-    [ [2, 4] , [5, 4] ],
-    [ [5, 8] , [7, 8] ],
-    [ [1, 1] , [1, 3] ],
-    [ [1, 8] , [1, 9] ]
-  ]);
+  let g = new Gameboard();
+  g.addShip("Carrier", 5, [9, 0], [9, 4]);
+  g.addShip("Battleship", 4, [2, 4], [5, 4]);
+  g.addShip("Cruiser", 3, [5, 8], [7, 8]);
+  g.addShip("Submarine", 3, [1, 1], [1, 3]);
+  g.addShip("Destroyer", 2, [1, 8], [1, 9]);
 
   expect(g.allSunk()).toBe(false);
 
@@ -61,13 +59,12 @@ test("allSunk", () => {
 });
 
 test("getSunk", () => {
-  let g = new Gameboard([
-    [ [9, 0] , [9, 4] ],
-    [ [2, 4] , [5, 4] ],
-    [ [5, 8] , [7, 8] ],
-    [ [1, 1] , [1, 3] ],
-    [ [1, 8] , [1, 9] ]
-  ]);
+  let g = new Gameboard();
+  g.addShip("Carrier", 5, [9, 0], [9, 4]);
+  g.addShip("Battleship", 4, [2, 4], [5, 4]);
+  g.addShip("Cruiser", 3, [5, 8], [7, 8]);
+  g.addShip("Submarine", 3, [1, 1], [1, 3]);
+  g.addShip("Destroyer", 2, [1, 8], [1, 9]);
 
   g.receiveAttack(9, 0);
   g.receiveAttack(9, 1);
@@ -83,4 +80,8 @@ test("getSunk", () => {
   g.receiveAttack(5, 4);
 
   expect(g.getSunk()).toStrictEqual(["Carrier", "Battleship"]);
+});
+
+test("randomBoard", () => {
+  let rando = randomBoard();
 });
